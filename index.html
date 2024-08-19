@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" 
+          content="width=device-width, initial-scale=1.0">
+    <title>Weather App UI using Tailwind CSS</title>
+    <link href=
+"https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+          rel="stylesheet">
+    <link href=
+"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+          rel="stylesheet">
+</head>
+
+<body class="bg-gradient-to-br from-blue-400 
+             to-purple-600 min-h-screen flex 
+             justify-center items-center">
+    <div class="max-w-md bg-white p-8 rounded-md 
+                shadow-lg w-full h-auto">
+        <h1 class="text-3xl font-semibold mb-6 
+                   text-green-500 text-center">
+          Weather App UI using Tailwind CSS
+          </h1>
+        <form id="weather-form" class="mb-6 relative">
+            <label for="city" 
+                   class="block text-blue-700 
+                          font-medium mb-2">
+              Enter City:
+              </label>
+            <div class="flex items-center">
+                <input type="text" id="city" 
+                       name="city"
+                       class="mt-1 px-4 py-2 block w-64 
+                              h-12 rounded-md border 
+                              border-gray-300 
+                              focus:outline-none 
+                              focus:border-blue-500 
+                              placeholder-gray-500"
+                       placeholder="Enter city name">
+                <button type="submit"
+                        class="ml-1 bg-blue-500 text-white
+                               py-2 px-4 h-12 rounded-md 
+                               hover:bg-blue-600 
+                               focus:outline-none 
+                               focus:bg-blue-600">
+                    Get Weather
+                </button>
+            </div>
+        </form>
+
+        <div id="weather-info" 
+             class="grid grid-cols-2 gap-4">
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('weather-form');
+        const weatherInfo = document.getElementById('weather-info');
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const city = form.city.value.trim();
+            if (city === '') {
+                alert('Please enter a city name.');
+                return;
+            }
+          
+            // Replace with your OpenWeatherMap API key
+            const apiKey = '44afd2370b0b091bd155f0a245cf853e'; 
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                if (response.ok) {
+                    displayWeather(data);
+                } else {
+                    displayError(data.message);
+                }
+            } catch (error) {
+                displayError('Failed to fetch weather data.');
+            }
+        });
+
+        function displayWeather(data) {
+            weatherInfo.innerHTML = `
+                <div class="border rounded-md p-4 
+                            bg-yellow-200 
+                            hover:bg-yellow-300
+                            transition-colors duration-300 
+                            ease-in-out">
+                    <span class="text-gray-900">
+                        <i class="fas fa-thermometer-half
+                                  text-red-500">
+                          </i>
+                        Temperature:
+                      </span>
+                    <span class="text-gray-800 
+                                 font-medium">
+                                 ${data.main.temp}°C
+                      </span>
+                </div>
+                <div class="border rounded-md p-4 
+                            bg-blue-200 hover:bg-blue-300
+                            transition-colors duration-300
+                            ease-in-out">
+                    <span class="text-gray-900">
+                    <i class="fas fa-cloud-sun 
+                              text-blue-500">
+                      </i>
+                    Weather:
+                      </span>
+                    <span class="text-gray-800 
+                                 font-medium">    
+                           ${data.weather[0].description}
+                      </span>
+                </div>
+                <div class="border rounded-md p-4 
+                            bg-green-200 hover:bg-green-300
+                            transition-colors duration-300
+                            ease-in-out">
+                    <span class="text-gray-900">
+                        <i class="fas fa-tint 
+                                  text-green-500">
+                          </i>
+                            Humidity:
+                      </span>
+                    <span class="text-gray-800 
+                                 font-medium">
+                                 ${data.main.humidity}%
+                      </span>
+                </div>
+                <div class="border rounded-md p-4 
+                            bg-purple-200 hover:bg-purple-300
+                            transition-colors duration-300 
+                            ease-in-out">
+                    <span class="text-gray-900">
+                        <i class="fas fa-wind text-yellow-500"></i>
+                                Wind Speed:
+                      </span>
+                    <span class="text-gray-800 
+                                 font-medium">
+                                 ${data.wind.speed} km/h
+                      </span>
+                </div>
+                <div class="border rounded-md p-4 
+                             bg-red-200 hover:bg-red-300
+                            transition-colors duration-300
+                            ease-in-out">
+                    <span class="text-gray-900">
+                        <i class="fas fa-eye 
+                                  text-indigo-500"></i>
+                                  Visibility:
+                      </span>
+                    <span class="text-gray-800 
+                                 font-medium">
+                                 ${data.visibility / 1000} km
+                      </span>
+                </div>
+                <div class="border rounded-md 
+                            p-4 bg-pink-200 
+                            hover:bg-pink-300 
+                            transition-colors 
+                            duration-300 
+                            ease-in-out">
+                    <span class="text-gray-900">
+                        <i class="fas fa-tachometer-alt
+                                    text-yellow-400">
+                          </i>
+                    Pressure:</span>
+                    <span class="text-gray-800 
+                                 font-medium">
+                                 ${data.main.pressure} hPa
+                      </span>
+                </div>
+                <div class="border rounded-md p-4 
+                            bg-yellow-200 
+                            hover:bg-yellow-300 
+                            transition-colors 
+                            duration-300 ease-in-out">
+                    <span class="text-gray-900">
+                        <i class="fas fa-sun text-yellow-500"></i>
+                            Sunrise:
+                      </span>
+                    <span class="text-gray-800 
+                                 font-medium">
+                          ${new Date(data.sys.sunrise * 1000)
+                                  .toLocaleTimeString()}
+                      </span>
+                </div>
+                <div class="border rounded-md p-4 
+                            bg-gray-300 hover:bg-gray-400
+                            transition-colors duration-300
+                            ease-in-out">
+                    <span class="text-gray-900">
+                        <i class="fas fa-moon 
+                                  text-yellow-400">
+                          </i> Sunset:
+                      </span>
+                    <span class="text-gray-800 
+                                 font-medium">
+                        ${new Date(data.sys.sunset * 1000)
+                              .toLocaleTimeString()}
+                     </span>
+                </div>
+            `;
+        }
+
+        function displayError(message) {
+            weatherInfo.innerHTML = 
+              `<div class="text-red-500">${message}</div>`;
+        }
+    </script>
+</body>
+
+</html>
